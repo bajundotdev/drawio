@@ -1,0 +1,31 @@
+services:
+  drawio:
+    image: jgraph/drawio:latest
+    container_name: drawio_app
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - PUBLIC_DNS=${PUBLIC_DNS}
+      - DRAWIO_EXPORT_URL=http://drawio-export:8000/
+      - DRAWIO_CONFIG_PRECONFIG=${DRAWIO_CONFIG_PRECONFIG}
+      - DRAWIO_CONFIG_POSTCONFIG=${DRAWIO_CONFIG_POSTCONFIG}
+      - DRAWIO_GOOGLE_CLIENT_ID=${DRAWIO_GOOGLE_CLIENT_ID}
+      - DRAWIO_MSGRAPH_CLIENT_ID=${DRAWIO_MSGRAPH_CLIENT_ID}
+    depends_on:
+      - drawio-export
+    networks:
+      - drawio-net
+
+  drawio-export:
+    image: jgraph/export-server:latest
+    container_name: drawio_export_server
+    restart: always
+    environment:
+      - DRAWIO_START_PORT=8000
+    networks:
+      - drawio-net
+
+networks:
+  drawio-net:
+    driver: bridge
